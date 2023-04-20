@@ -6,27 +6,34 @@ on:
 jobs:
   build:
     name: Build Web
-    env:
-      my_secret: ${{secrets.commit_secret}}
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v1
+      - uses: actions/checkout@v3
       - uses: subosito/flutter-action@v1
         with:
           channel: 'stable'
+      - uses: actions/checkout@v2
+        with:
+          persist-credentials: false # otherwise, the token used is the GITHUB_TOKEN, instead of your personal access token.
+          fetch-depth: 0 # otherwise, there would be errors pushing refs to the destination repository.
       - run: flutter config --enable-web
       - run: flutter clean
       - run: flutter pub get
       # base ref need to remove or change manually(./)
-      - run: flutter build web --release --web-renderer html --base-href /paper/
+      - run: flutter build web --release --web-renderer html --base-href /./
       - run: |
           cd build/web
           git init
           git config --global user.email morningos@foxmail.com
           git config --global user.name iMorning
           git status
-          git remote add origin git@github.com:morningos/paper.git
+          git remote add origin https://${{secrets.commit_secret}}@github.com/morningos/paper.git
           git checkout -b gh-pages
           git add --all
           git commit -m "update"
-          git push origin gh-pages -f
+          # git push origin gh-pages -f
+      - name: Push changes
+        uses: morningos/paper@gh-pages
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          force_with_lease: true
