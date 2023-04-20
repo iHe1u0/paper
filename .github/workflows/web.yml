@@ -23,7 +23,8 @@ jobs:
           git config --global user.email morningos@foxmail.com
           git config --global user.name iMorning
           git status
-          git remote add origin https://${{secrets.commit_secret}}@github.com/morningos/paper.git
+          # git remote add origin https://${{secrets.commit_secret}}@github.com/morningos/paper.git
+          git remote add origin git@github.com:morningos/paper.git
           git checkout -b gh-pages
           git add --all
           git commit -m "update"
