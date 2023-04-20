@@ -1,5 +1,5 @@
 name: Paper
-on: [pull_request, pull_request_target]
+on: [push]
 
 jobs:
   build:
@@ -9,6 +9,9 @@ jobs:
       with:
         ref: ${{ github.head_ref }}
         fetch-depth: 0
+    - uses: subosito/flutter-action@v1
+      with:
+        channel: 'stable'
     - name: Commit files
       run: |
         git config --local user.email "morningos@foxmail.com"
