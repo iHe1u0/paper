@@ -1,0 +1,32 @@
+name: Paper
+on:
+  push:
+    branches:
+      - main
+jobs:
+  build:
+    name: Build Web
+    env:
+      my_secret: ${{secrets.commit_secret}}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v1
+      - uses: subosito/flutter-action@v1
+        with:
+          channel: 'stable'
+      - run: flutter config --enable-web
+      - run: flutter clean
+      - run: flutter pub get
+      # base ref need to remove or change manually(./)
+      - run: flutter build web --release --web-renderer html --base-href /paper/
+      - run: |
+          cd build/web
+          git init
+          git config --global user.email morningos@foxmail.com
+          git config --global user.name iMorning
+          git status
+          git remote add origin https://${{secrets.commit_secret}}@github.com/morningos/paper.git
+          git checkout -b gh-pages
+          git add --all
+          git commit -m "update"
+          git push origin gh-pages -f
