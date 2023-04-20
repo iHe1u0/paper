@@ -18,7 +18,7 @@ jobs:
         git config --local user.name "iMorning"
         git commit -a -m "Add changes"
     - name: Push changes
-      uses: morningos/paper@gh-pages
+      uses: morningos/paper@test
       with:
         branch: ${{ github.head_ref }}
 
